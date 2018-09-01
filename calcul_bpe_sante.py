@@ -20,7 +20,7 @@ df = pd.DataFrame(my_data)
 #df = df.set_index("CODGEO")
 
 ##Creation d'un fichier echantillon
-df = df.sample(frac=0.005, replace=True)
+#df = df.sample(frac=0.005, replace=True)
 df_final = df.copy()
 
 #Connexion a la Base De Donnees
@@ -60,7 +60,7 @@ for col in df.columns:
                         try:
                                 cursor.execute(query_sql, liste_equip)
                                 TPS = cursor.fetchone()[0]
-                                print(TPS)
+                                #print(TPS)
                         except:
                                 #print("erreur SQL")
                                 TPS = 'NULL'
@@ -69,7 +69,7 @@ for col in df.columns:
 
                         #liste_resultat.append(TPS)
                         pbar.update(1)
-                        #df_final.to_csv(col_name)
+                        df_final.to_csv(col_name)
 
                     ##Ajout d'une colonne audataframe final avec les resultat précédent
 
