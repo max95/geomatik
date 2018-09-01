@@ -1,0 +1,7 @@
+[POSTGRES]
+host: address
+port: port
+db: dbname
+user: login
+pass: mdp
+
