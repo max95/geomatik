@@ -25,25 +25,29 @@ function get_time_by_depcom($start, $stop, $key, $pdo) { //je passe en paramètr
 
 function get_time_by_longlat($start_long, $start_lat, $stop_long, $stop_lat, $key, $pdo){
     $valid_key = confirm_key($key, $pdo);
-    if ($valid_key < 1){return "Key API invalid";
+    if ($valid_key < 1){return "API KEY invalid";
     }
-    $url = "http://51.254.121.49:5000table/v1/driving/".$start_long.",".$start_lat.";".$stop_long.",".$stop_lat;
+    //$url = "http://51.254.121.49:5000table/v1/driving/".$start_long.",".$start_lat.";".$stop_long.",".$stop_lat;
     $response = file_get_contents("http://51.254.121.49:5000/table/v1/driving/".$start_long.",".$start_lat.";".$stop_long.",".$stop_lat);
     $data = json_decode($response);
     $duration = $data->{'durations'}[1][0];
     return $duration;
-    //return $data;
 }
 
-$possible_url = array("get_list_articles", "get_time_depcom", "get_time_longlat"); //je définis les URLs valables
+$possible_url = array("get_time_depcom", "get_time_longlat"); //je définis les URLs valables
 $value = "Une erreur est survenue"; //je mets le message d'erreur par défaut dans une variable
 if (isset($_GET["action"]) && in_array($_GET["action"], $possible_url)) { //si l'URL est OK
     switch ($_GET["action"]) {
-        //case "get_list_articles": $value = get_list_articles($pdo); break; //Je récupère la liste des articles
-        case "get_time_depcom": if (isset($_GET["start"]) && $_GET["stop"] && $_GET["key"]) $value = get_time_by_depcom($_GET["start"], $_GET["stop"], $_GET["key"], $pdo); break;//si l'ID est spécifié alors je renvoie l'article en question
-        case "get_time_longlat": if (isset($_GET["start_long"]) && $_GET["start_lat"] && $_GET["stop_long"] && $_GET["stop_lat"] && $_GET["key"]) $value = get_time_by_longlat($_GET["start_long"], $_GET["start_lat"],$_GET["stop_long"],$_GET["stop_lat"],$_GET["key"],$pdo); //si l'ID est spécifié alors je renvoie l'article en question
-        else $value = "Argument manquant"; break;
-      } //si l'ID n'est pas valable je change mon message d'erreur
+        case "get_time_depcom": 
+            if (isset($_GET["start"]) && $_GET["stop"] && $_GET["key"]) 
+                $value = get_time_by_depcom($_GET["start"], $_GET["stop"], $_GET["key"], $pdo);
+            else $value = "Argument manquant"; 
+            break;
+        case "get_time_longlat": 
+            if (isset($_GET["start_long"]) && $_GET["start_lat"] && $_GET["stop_long"] && $_GET["stop_lat"] && $_GET["key"]) $value = get_time_by_longlat($_GET["start_long"], $_GET["start_lat"],$_GET["stop_long"],$_GET["stop_lat"],$_GET["key"],$pdo);
+            else $value = "Argument manquant"; 
+            break;
+      } 
 }
 exit(json_encode($value)); //je retourne ma réponse en JSON
 
