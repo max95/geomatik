@@ -6,6 +6,7 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import configparser
+import sys
 
 ##PENSE-BETE
 #http://eric.univ-lyon2.fr/~ricco/tanagra/fichiers/fr_Tanagra_Data_Manipulation_Pandas.pdf
@@ -18,7 +19,9 @@ config = configparser.RawConfigParser()
 config.read('./config')
 
 ##Lecture du fichier source
-my_data = pd.read_csv('./equip-serv-sante-com-2017.csv', encoding = "utf-8", sep=';')
+file_name_src = sys.argv[1]
+#my_data = pd.read_csv('./equip-serv-sante-com-2017.csv', encoding = "utf-8", sep=';')
+my_data = pd.read_csv(file_name_src, encoding = "utf-8", sep=';')
 df = pd.DataFrame(my_data)
 
 ##Creation d'un fichier echantillon
@@ -48,20 +51,21 @@ for col in df.columns:
                     #Recherche de la commune la plus proche et récupération du tps de parcours
                     for index, row in df.iterrows():
                         query_sql = "SELECT \"TPS\" from matrice_depcom WHERE \"DEPCOM_START\" = '{}' AND \"DEPCOM_STOP\" IN {} order BY \"TPS\" limit 1".format(row['CODGEO'], repr(tuple(map(str,liste_equip))))
-
+            
                         try:
                                 cursor.execute(query_sql, liste_equip)
                                 TPS = cursor.fetchone()[0]
                         except:
                                 TPS = 'NULL'
-
+            
                         #Mise à jour du tableau
                         df_final.loc[df_final['CODGEO'] == row['CODGEO'] , col_name] = TPS
-
+            
                         #liste_resultat.append(TPS)
                         pbar.update(1)
-
-		    nom_fichier = "{}.csv".format(col_name)
-		    df_final.to_csv(nom_fichier, encoding='utf-8')		
-
-df_final.to_csv('beta_bpe.csv', encoding='utf-8')
+            
+		    ##nom_fichier = "{}.csv".format(col_name)
+		    ##df_final.to_csv(nom_fichier, encoding='utf-8')
+file_name_dst = '.'.join(file_name_src.split('.')[:-1])			
+file_name_dst = "{}_time.csv".format(file_name_dst)
+df_final.to_csv(file_name_dst, encoding='utf-8')	
