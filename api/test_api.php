@@ -9,6 +9,13 @@ function confirm_key($key, $pdo){
   return $nb;
 }
 
+function count_use_key($key, $pdo){
+  $sql = "SELECT key FROM users WHERE \"key\" = '".$key."'"; //je réalise ma requête avec l'ID passée en paramètres
+    $sql = "UPDATE users Set use_key = use_key+1 where key='".$key."'";
+  $exe = $pdo->query($sql); //j'exécute ma requête
+    return "ok";
+}
+
 function get_time_by_depcom($start, $stop, $key, $pdo) { //je passe en paramètre de ma fonction l'id de l'article souhaité et l'objet PDO pour exécuter la requête
     $valid_key = confirm_key($key, $pdo);
     if ($valid_key < 1){return "Key API invalid";
@@ -20,6 +27,7 @@ function get_time_by_depcom($start, $stop, $key, $pdo) { //je passe en paramètr
         //$Detail_article = array("Titre" => $result->Titre, "Date" => $result->Date, "Article" => $result->Article);//je mets le résultat de ma requête dans une variable
         $time = array("TPS" => $result->TPS, "START" => $start, "STOP" => $stop);
     }
+    count_use_key($key, $pdo);
     return $time; //je retourne l'article en question
 }
 
