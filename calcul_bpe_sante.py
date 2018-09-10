@@ -36,13 +36,15 @@ cursor = conn.cursor()
 
 ##Parcourir les colonnes à la recherche des NB_
 for col in df.columns:
-    col_name = df[col].name
+	col_name_src = df[col].name
+	col_name_dst = "{}_time".format(col)
+	#df_final.loc[:, col_name_dst] = 0
 
-    if (col_name[0:3] == "NB_"): #Si unr colonne commene par NB_, on continu le traitement
+	if (col_name_src[0:3] == "NB_"): #Si unr colonne commene par NB_, on continu le traitement
             liste_equip = []    #Variable pour une de commune disposant de la ressource et RAZ
 
             #Obtenir la liste des communes disposant de la ressource
-            df_equip = (df.loc[df[col_name]>0,:])
+            df_equip = (df.loc[df[col_name_src]>0,:])
 
             #Creation d'une variable contenant les communes équipées de la ressource
             liste_equip = df_equip["CODGEO"].tolist()
@@ -59,13 +61,14 @@ for col in df.columns:
                                 TPS = 'NULL'
             
                         #Mise à jour du tableau
-                        df_final.loc[df_final['CODGEO'] == row['CODGEO'] , col_name] = TPS
+                        df_final.loc[df_final['CODGEO'] == row['CODGEO'] , col_name_dst] = TPS
             
                         #liste_resultat.append(TPS)
                         pbar.update(1)
             
-		    ##nom_fichier = "{}.csv".format(col_name)
-		    ##df_final.to_csv(nom_fichier, encoding='utf-8')
+		    nom_fichier = "{}.csv".format(col_name_src)
+		    df_final.to_csv(nom_fichier, encoding='utf-8')
+df_final.sort_index(axis = 1, ascending = True)
 file_name_dst = '.'.join(file_name_src.split('.')[:-1])			
 file_name_dst = "{}_time.csv".format(file_name_dst)
 df_final.to_csv(file_name_dst, encoding='utf-8')	
