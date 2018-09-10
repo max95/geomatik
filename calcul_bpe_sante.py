@@ -23,6 +23,7 @@ file_name_src = sys.argv[1]
 #my_data = pd.read_csv('./equip-serv-sante-com-2017.csv', encoding = "utf-8", sep=';')
 my_data = pd.read_csv(file_name_src, encoding = "utf-8", sep=';')
 df = pd.DataFrame(my_data)
+df[["CODGEO"]] = df[["CODGEO"]].astype(string)
 
 ##Creation d'un fichier echantillon
 #df = df.sample(frac=0.005, replace=True)
@@ -37,7 +38,7 @@ cursor = conn.cursor()
 ##Parcourir les colonnes à la recherche des NB_
 for col in df.columns:
 	col_name_src = df[col].name
-	col_name_dst = "{}_time".format(col)
+	col_name_dst = "{}_TPS".format(col)
 	#df_final.loc[:, col_name_dst] = 0
 
 	if (col_name_src[0:3] == "NB_"): #Si unr colonne commene par NB_, on continu le traitement
